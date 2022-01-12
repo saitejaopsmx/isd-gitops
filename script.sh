@@ -1,7 +1,7 @@
 #!/bin/bash
 export ns=newoes
 export ns=$ns
-echo newoes.yml >files.txt
+echo isd.yml >files.txt
 while read file;do
 echo $file
 grep "encrypted:" $file > file.yml
