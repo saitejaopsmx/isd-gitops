@@ -5,7 +5,7 @@
   "limitConcurrent": true,
   "parameterConfig": [
     {
-      "default": "newoes",
+      "default": "gitopshar18",
       "description": "the namespace were oes to be installed",
       "hasOptions": false,
       "label": "",
@@ -15,11 +15,11 @@
           "value": ""
         }
       ],
-      "pinned": false,
+      "pinned": true,
       "required": true
     },
     {
-      "default": "github.com/likhithayogirala/demo0.git",
+      "default": "github.com/haritha-opsmx/gitops-spin.git",
       "description": "",
       "hasOptions": false,
       "label": "",
@@ -47,7 +47,7 @@
       "required": true
     },
     {
-      "default": "demo0/isd-gitops",
+      "default": "gitops-spin/",
       "description": "",
       "hasOptions": false,
       "label": "",
@@ -58,17 +58,17 @@
         }
       ],
       "pinned": false,
-      "required": false
+      "required": true
     }
   ],
   "spelEvaluator": "v4",
   "stages": [
     {
-      "account": "saiteja",
+      "account": "kubernetes",
       "alias": "runJob",
       "application": "updateoes",
       "cloudProvider": "kubernetes",
-      "credentials": "saiteja",
+      "credentials": "kubernetes",
       "manifest": {
         "apiVersion": "batch/v1",
         "kind": "Job",
@@ -159,7 +159,7 @@
       "type": "runJobManifest"
     },
     {
-      "account": "saiteja",
+      "account": "kubernetes",
       "cloudProvider": "kubernetes",
       "manifests": [
         {
@@ -247,6 +247,7 @@
         "app": "updateoes"
       },
       "name": "deploy",
+      "namespaceOverride": "gitopshar18",
       "refId": "3",
       "requisiteStageRefIds": [
         "4"
@@ -256,20 +257,19 @@
       "trafficManagement": {
         "enabled": false,
         "options": {
-          "enableTraffic": false,
-          "services": []
+          "enableTraffic": false
         }
       },
       "type": "deployManifest"
     },
     {
-      "account": "saiteja",
+      "account": "kubernetes",
       "cloudProvider": "kubernetes",
       "manifests": [
         {
           "apiVersion": "v1",
           "data": {
-            "run.sh": "#!/bin/bash\ndir=$gitdir\nns=$ns\ngit clone  \"https://\"$gitusername\":\"$gitpassword\"@\"$gitrepo\"\"\necho $dir/onlyisd.yml >files.txt\nwhile read file;do\necho $file\ngrep \"encrypted:\" $file > file.yml\nwhile read line;do\necho $line\nsecret=$(echo $line | sed \"s/encrypted:/ /g\" | awk '{print $2}' | sed 's/:/ /g' |awk '{print $1}')\nkey=$(echo $line | sed \"s/encrypted:/ /g\" | awk '{print $2}' | sed 's/:/ /g' |awk '{print $2}')\nvalue=$(kubectl -n $ns  get secret $secret -o jsonpath=\"{.data.$key}\" |\nbase64 -d)\nsed -i \"s/encrypted:$secret:$key/$value/g\" $file\ndone <file.yml\nkubectl -n $ns apply -f $file\ndone <files.txt\n"
+            "run.sh": "#!/bin/bash\ndir=$gitdir\nns=$ns\ngit clone  \"https://\"$gitusername\":\"$gitpassword\"@\"$gitrepo\"\"\necho $dir/*.yml >files.txt\nwhile read file;do\necho $file\ngrep \"encrypted:\" $file > file.yml\nwhile read line;do\necho $line\nsecret=$(echo $line | sed \"s/encrypted:/ /g\" | awk '{print $2}' | sed 's/:/ /g' |awk '{print $1}')\nkey=$(echo $line | sed \"s/encrypted:/ /g\" | awk '{print $2}' | sed 's/:/ /g' |awk '{print $2}')\nvalue=$(kubectl -n $ns  get secret $secret -o jsonpath=\"{.data.$key}\" |\nbase64 -d)\nsed -i \"s/encrypted:$secret:$key/$value/g\" $file\ndone <file.yml\nkubectl -n $ns apply -f $file\ndone <files.txt\n"
           },
           "kind": "ConfigMap",
           "metadata": {
@@ -282,7 +282,7 @@
         "app": "saiteja10"
       },
       "name": "configmap creation",
-      "namespaceOverride": "newoes",
+      "namespaceOverride": "gitopshar18",
       "refId": "4",
       "requisiteStageRefIds": [],
       "skipExpressionEvaluation": false,
@@ -290,13 +290,12 @@
       "trafficManagement": {
         "enabled": false,
         "options": {
-          "enableTraffic": false,
-          "services": []
+          "enableTraffic": false
         }
       },
       "type": "deployManifest"
     }
   ],
   "triggers": [],
-  "updateTs": "1641823559000"
+  "updateTs": "1642494361000"
 }
